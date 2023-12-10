@@ -1,3 +1,6 @@
+//! **Lqth (لقطه) which means "shot" in Arabic** is a simple but blazingly fast screenshot utility
+//! inspired by [xscreenshot](https://git.codemadness.org/xscreenshot) and follows the suckless philosophy
+
 use std::{
     io::{self, Write},
     mem::MaybeUninit,
@@ -10,9 +13,7 @@ use x11::xlib::{
     XOpenDisplay, XRootWindow, XUngrabServer, ZPixmap,
 };
 
-// use x11rb::connection::Connection;
-// use x11rb::protocol::xproto::*;
-
+/// Take a screenshot for the full screen.
 pub fn tick() -> Result<(), Box<dyn std::error::Error>> {
     let dpy = unsafe { XOpenDisplay(ptr::null()) };
     // dbg!(dpy);
