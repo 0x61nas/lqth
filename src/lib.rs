@@ -1,5 +1,7 @@
-//! **Lqth (لقطه) which means "shot" in Arabic** is a simple but blazingly fast screenshot utility
-//! inspired by [xscreenshot](https://git.codemadness.org/xscreenshot) and follows the suckless philosophy
+//! **Lqth (لقطه) which means "shot" or/and "capture" in Arabic** is a simple but blazingly fast screenshot utility
+//! inspired by [xscreenshot](https://git.codemadness.org/xscreenshot) and follows the suckless philosophy...(AHM, ahmmmm)... most of it :).
+//!
+//!
 
 use std::{
     io::{self, Write},
