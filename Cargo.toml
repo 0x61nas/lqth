@@ -1,0 +1,13 @@
+[package]
+name = "lqth"
+version = "0.1.0"
+edition = "2021"
+autobins = false
+
+[[bin]]
+name = "lqth"
+path = "src/bin/main.rs"
+
+[dependencies]
+byteorder = "1.5.0"
+x11 = { version = "2.21.0", features = ["xlib"] }
