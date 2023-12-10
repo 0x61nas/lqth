@@ -1,5 +1,8 @@
+use std::io;
+
 use lqth::tick;
 
 fn main() {
-    tick().unwrap();
+    let mut out_buf = io::stdout().lock();
+    tick(&mut out_buf).unwrap();
 }

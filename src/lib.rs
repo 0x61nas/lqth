@@ -15,8 +15,13 @@ use x11::xlib::{
     XOpenDisplay, XRootWindow, XUngrabServer, ZPixmap,
 };
 
+const MAGIC_BYTES: &[u8; 8] = b"farbfeld";
+const ALPHA_BYTES: &[u8; 2] = &u16::MAX.to_be_bytes();
+const ALL_PLANES: u32 = !0; // a.k.a. 0xffff_ffff
+
 /// Take a screenshot for the full screen.
-pub fn tick() -> Result<(), Box<dyn std::error::Error>> {
+#[inline]
+pub fn tick<W: Write>(out_buf: &mut W) -> Result<(), Box<dyn std::error::Error>> {
     let dpy = unsafe { XOpenDisplay(ptr::null()) };
     // dbg!(dpy);
     let win = unsafe { XRootWindow(dpy, 0) };
@@ -24,7 +29,6 @@ pub fn tick() -> Result<(), Box<dyn std::error::Error>> {
     let mut win_attr = MaybeUninit::uninit();
     unsafe { XGetWindowAttributes(dpy, win, win_attr.as_mut_ptr()) };
     let win_attr = unsafe { win_attr.assume_init() };
-    const ALL_PLANES: u32 = !0; // a.k.a. 0xffff_ffff
     let img_ptr = unsafe {
         XGetImage(
             dpy,
@@ -70,42 +74,44 @@ pub fn tick() -> Result<(), Box<dyn std::error::Error>> {
         other => panic!("Unsupported bpp: {other}"),
     }
 
-    let mut out = io::stdout().lock();
-
     // The magic value
-    out.write_all(b"farbfeld")?;
+    out_buf.write_all(MAGIC_BYTES)?;
 
     let mut buf = [0u8; 4];
     BigEndian::write_u32(&mut buf, win_attr.width as u32);
-    out.write_all(&buf)?; // 4 bytes
+    out_buf.write_all(&buf)?; // 4 bytes
     BigEndian::write_u32(&mut buf, win_attr.height as u32);
-    out.write_all(&buf)?; // 4 bytes
+    out_buf.write_all(&buf)?; // 4 bytes
 
-    let mut tpix = [0u16; 3];
+    macro_rules! write_channel {
+        ($out: ident; $buf: ident, $cn: expr) => {
+            {
+                BigEndian::write_u16(&mut $buf, $cn);
+                $out.write_all(&$buf)
+            }
+        };
+        ($out: ident; $buf: ident; channels: $($cn: expr,)+) => {
+            $(write_channel!($out; $buf, $cn)?;)*
+        };
+    }
+
     let mut buf = [0u8; 2];
-    let mut alpha_buf = [0; 2];
-    BigEndian::write_u16(&mut alpha_buf, u16::MAX);
     // write pixels
     for h in 0..win_attr.height {
         for w in 0..win_attr.width {
-            // let p = img.sequence
+            // SAFETY: If we reatch to here, then we're sure that the `img_ptr` are valid. Also `w` and `h` will always be in the renge.
             let p = unsafe { XGetPixel(img_ptr, w, h) };
-            tpix[0] = ((p & img.red_mask) >> sr) as u16 * fr;
-            tpix[1] = ((p & img.green_mask) >> sg) as u16 * fg;
-            tpix[2] = (p & img.blue_mask) as u16 * fb;
-
-            for c in tpix {
-                BigEndian::write_u16(&mut buf, c);
-                out.write_all(&buf)?;
-                // for b in buf {
-                //     write!(out, "{b}")?;
-                // }
-            }
+            write_channel! { out_buf; buf;
+                channels:
+                ((p & img.red_mask) >> sr) as u16 * fr,
+                ((p & img.green_mask) >> sg) as u16 * fg,
+                (p & img.blue_mask) as u16 * fb,
+            };
             // The alpha channel will always = MAX
-            out.write_all(&alpha_buf)?;
+            out_buf.write_all(ALPHA_BYTES)?;
         }
     }
-    out.flush()?;
+    // out_buf.flush()?;
     unsafe { XDestroyImage(img_ptr) };
     Ok(())
 }
