@@ -19,4 +19,4 @@ path = "src/bin/main.rs"
 [dependencies]
 byteorder = "1.5"
 thiserror = "1"
-x11 = { version = "2.21", features = ["xlib"] }
+x11 = { version = "2.21", default-features = false, features = ["xlib"] }
