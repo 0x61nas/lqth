@@ -100,16 +100,15 @@ impl Default for TickTick {
     }
 }
 
-impl TickTick {
-    pub fn tick<W: Write>(&self, buf: &mut W) -> Result<()> {
-        crate::tick(buf, self)
-    }
-}
-
 pub trait LqthConfig {
     fn dpy_addr(&self) -> &DpyAddr;
     fn win(&self) -> Window;
     fn mode(&self) -> Mode;
+
+    #[inline(always)]
+    fn tick<W: Write>(&self, out_buf: &mut W) -> Result<()> {
+        crate::tick(out_buf, self)
+    }
 }
 
 impl LqthConfig for TickTick {
@@ -148,7 +147,7 @@ impl LqthConfig for () {
 pub fn tick<W, C>(out_buf: &mut W, config: &C) -> Result<()>
 where
     W: Write,
-    C: LqthConfig,
+    C: LqthConfig + ?Sized,
 {
     let dpy = unsafe { XOpenDisplay(config.dpy_addr().ptr()) };
     if dpy.is_null() {
