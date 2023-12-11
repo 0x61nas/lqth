@@ -3,52 +3,184 @@
 //!
 //!
 
-use std::{
-    io::{self, Write},
-    mem::MaybeUninit,
-    ptr,
-};
+use std::{io::Write, mem::MaybeUninit, ptr};
 
 use byteorder::{BigEndian, ByteOrder};
 use x11::xlib::{
     XCloseDisplay, XDestroyImage, XGetImage, XGetPixel, XGetWindowAttributes, XGrabServer,
-    XOpenDisplay, XRootWindow, XUngrabServer, ZPixmap,
+    XOpenDisplay, XRootWindow, XUngrabServer, XWindowAttributes, ZPixmap, _XDisplay,
 };
 
 const MAGIC_BYTES: &[u8; 8] = b"farbfeld";
 const ALPHA_BYTES: &[u8; 2] = &u16::MAX.to_be_bytes();
-const ALL_PLANES: u32 = !0; // a.k.a. 0xffff_ffff
+const ALL_PLANES: u64 = !0; // a.k.a. 0xffff_ffff
+
+#[derive(thiserror::Error, Debug)]
+pub enum TickError {
+    #[error("Can't open the selected X display")]
+    CantOpenDpy,
+    #[error("Can't get an image for the selected window")]
+    CantGetImage,
+    #[error("{0}")]
+    IOError(#[from] std::io::Error),
+}
+
+pub type Result<T> = std::result::Result<T, TickError>;
+
+#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
+pub enum DpyAddr {
+    Custom(String),
+    #[default]
+    Current,
+}
+
+impl DpyAddr {
+    fn ptr(&self) -> *const i8 {
+        match self {
+            DpyAddr::Custom(addr) => addr.as_ptr().cast(),
+            DpyAddr::Current => ptr::null(),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
+pub enum Window {
+    Custom(u64),
+    Root(i32),
+}
+
+impl Window {
+    fn id(&self, dpy: *mut _XDisplay) -> u64 {
+        match self {
+            Window::Custom(id) => id.to_owned(),
+            Window::Root(screen_num) => unsafe { XRootWindow(dpy, screen_num.to_owned()) },
+        }
+    }
+}
+pub type Point = (u32, u32);
+pub type PointI = (i32, i32);
+
+#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
+pub enum Mode {
+    #[default]
+    Full,
+    Selection {
+        start: Option<PointI>,
+        end: Option<Point>,
+    },
+}
+
+impl Mode {
+    #[inline]
+    fn transform(&self, win_attr: XWindowAttributes) -> (PointI, Point) {
+        match self {
+            Mode::Full => ((0, 0), (win_attr.width as u32, win_attr.height as u32)),
+            Mode::Selection { start, end } => (
+                start.unwrap_or((0, 0)),
+                end.unwrap_or((win_attr.width as u32, win_attr.height as u32)),
+            ),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
+pub struct TickTick {
+    pub dpy_addr: DpyAddr,
+    pub win: Window,
+    pub mode: Mode,
+}
+
+impl Default for TickTick {
+    fn default() -> Self {
+        Self {
+            dpy_addr: DpyAddr::default(),
+            win: Window::Root(0),
+            mode: Mode::default(),
+        }
+    }
+}
+
+impl TickTick {
+    pub fn tick<W: Write>(&self, buf: &mut W) -> Result<()> {
+        crate::tick(buf, self)
+    }
+}
+
+pub trait LqthConfig {
+    fn dpy_addr(&self) -> &DpyAddr;
+    fn win(&self) -> Window;
+    fn mode(&self) -> Mode;
+}
+
+impl LqthConfig for TickTick {
+    #[inline(always)]
+    fn dpy_addr(&self) -> &DpyAddr {
+        &self.dpy_addr
+    }
+
+    #[inline(always)]
+    fn win(&self) -> Window {
+        self.win.clone()
+    }
+
+    #[inline(always)]
+    fn mode(&self) -> Mode {
+        self.mode.clone()
+    }
+}
+
+impl LqthConfig for () {
+    fn dpy_addr(&self) -> &DpyAddr {
+        &DpyAddr::Current
+    }
+
+    fn win(&self) -> Window {
+        Window::Root(0)
+    }
+
+    fn mode(&self) -> Mode {
+        Mode::default()
+    }
+}
 
 /// Take a screenshot for the full screen.
 #[inline]
-pub fn tick<W: Write>(out_buf: &mut W) -> Result<(), Box<dyn std::error::Error>> {
-    let dpy = unsafe { XOpenDisplay(ptr::null()) };
-    // dbg!(dpy);
-    let win = unsafe { XRootWindow(dpy, 0) };
-    unsafe { XGrabServer(dpy) };
+pub fn tick<W, C>(out_buf: &mut W, config: &C) -> Result<()>
+where
+    W: Write,
+    C: LqthConfig,
+{
+    let dpy = unsafe { XOpenDisplay(config.dpy_addr().ptr()) };
+    if dpy.is_null() {
+        return Err(TickError::CantOpenDpy);
+    }
     let mut win_attr = MaybeUninit::uninit();
-    unsafe { XGetWindowAttributes(dpy, win, win_attr.as_mut_ptr()) };
+    // SAFETY: we are sure that the `dpy` pointer is valid.
+    let win = config.win().id(dpy);
+    // TODO: should check on the window id and see if there an window with this id or not?
+    unsafe {
+        XGrabServer(dpy);
+        XGetWindowAttributes(dpy, win, win_attr.as_mut_ptr())
+    };
+    // SAFETY: in this point the `win_attr` suhod be initialized. Otherwise the X server should be killed the process already.
     let win_attr = unsafe { win_attr.assume_init() };
+    let ((xs, ys), (xe, ye)) = config.mode().transform(win_attr);
     let img_ptr = unsafe {
         XGetImage(
-            dpy,
-            win,
-            0,
-            0,
-            win_attr.width as u32,
-            win_attr.height as u32,
-            ALL_PLANES.into(),
-            ZPixmap,
+            dpy, win, //
+            xs, ys, // x and y
+            xe, ye, // Width and height
+            ALL_PLANES, ZPixmap,
         )
     };
-    if img_ptr.is_null() {
-        panic!("XGetImage");
-    }
-    let img = unsafe { *img_ptr };
     unsafe {
         XUngrabServer(dpy);
         XCloseDisplay(dpy);
     }
+    if img_ptr.is_null() {
+        return Err(TickError::CantGetImage);
+    }
+    let img = unsafe { *img_ptr };
 
     let sr: u8;
     let sg: u8;
@@ -78,9 +210,9 @@ pub fn tick<W: Write>(out_buf: &mut W) -> Result<(), Box<dyn std::error::Error>>
     out_buf.write_all(MAGIC_BYTES)?;
 
     let mut buf = [0u8; 4];
-    BigEndian::write_u32(&mut buf, win_attr.width as u32);
+    BigEndian::write_u32(&mut buf, img.width as u32);
     out_buf.write_all(&buf)?; // 4 bytes
-    BigEndian::write_u32(&mut buf, win_attr.height as u32);
+    BigEndian::write_u32(&mut buf, img.height as u32);
     out_buf.write_all(&buf)?; // 4 bytes
 
     macro_rules! write_channel {
@@ -97,8 +229,8 @@ pub fn tick<W: Write>(out_buf: &mut W) -> Result<(), Box<dyn std::error::Error>>
 
     let mut buf = [0u8; 2];
     // write pixels
-    for h in 0..win_attr.height {
-        for w in 0..win_attr.width {
+    for h in 0..img.height {
+        for w in 0..img.width {
             // SAFETY: If we reatch to here, then we're sure that the `img_ptr` are valid. Also `w` and `h` will always be in the renge.
             let p = unsafe { XGetPixel(img_ptr, w, h) };
             write_channel! { out_buf; buf;
@@ -111,7 +243,7 @@ pub fn tick<W: Write>(out_buf: &mut W) -> Result<(), Box<dyn std::error::Error>>
             out_buf.write_all(ALPHA_BYTES)?;
         }
     }
-    // out_buf.flush()?;
+    // SAFETY: we are sure that our pointer is valid.
     unsafe { XDestroyImage(img_ptr) };
     Ok(())
 }

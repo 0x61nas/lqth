@@ -10,4 +10,5 @@ path = "src/bin/main.rs"
 
 [dependencies]
 byteorder = "1.5.0"
+thiserror = "1.0.50"
 x11 = { version = "2.21.0", features = ["xlib"] }
