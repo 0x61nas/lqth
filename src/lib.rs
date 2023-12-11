@@ -143,7 +143,7 @@ impl LqthConfig for () {
     }
 }
 
-/// Take a screenshot for the full screen.
+/// Take a screenshot based on the config and write it as a farbfeld bytes to the buffer
 #[inline]
 pub fn tick<W, C>(out_buf: &mut W, config: &C) -> Result<()>
 where
