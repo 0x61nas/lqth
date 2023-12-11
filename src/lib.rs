@@ -29,15 +29,15 @@
 //! ().tick(&mut out).unwrap();
 //! ```
 //!
-//! # The banary?
+//! # The  binary?
 //! > Nah, am a norme person and I don't wanna write code in this language to JUST TAKE A SCREENSHOT, can you give me a JW solution?
 //!
-//! We offer a simple banary thats implement the most of this crate features. You can build it with the build command or if u use cargo then you can install it via `cargo install lqth`.
+//! We offer a simple binary thats implement the most of this crate features. You can build it with the build command or if u use cargo then you can install it via `cargo install lqth`.
 //!
-//! > **Note** for more information about the banary and how to use it, you can run `lqth -h` or see this [document](./docs/bin.md).
+//! > **Note** for more information about the binary and how to use it, you can run `lqth -h` or see this [document](./docs/bin.md).
 //!
 //! # Wayland?
-//! Nah, I don't/can't use it.
+//! Nah, I luv my X.
 //!
 //!
 //! # Contributing
