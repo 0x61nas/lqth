@@ -161,7 +161,7 @@ where
         XGrabServer(dpy);
         XGetWindowAttributes(dpy, win, win_attr.as_mut_ptr())
     };
-    // SAFETY: in this point the `win_attr` suhod be initialized. Otherwise the X server should be killed the process already.
+    // SAFETY: in this point, the `win_attr` should be initialized. Otherwise, the X server should be killed the process already.
     let win_attr = unsafe { win_attr.assume_init() };
     let ((xs, ys), (xe, ye)) = config.mode().transform(win_attr);
     let img_ptr = unsafe {
