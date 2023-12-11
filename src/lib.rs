@@ -34,7 +34,7 @@
 //!
 //! We offer a simple banary thats implement the most of this crate features. You can build it with the build command or if u use cargo then you can install it via `cargo install lqth`.
 //!
-//! > **[[Note]]** for more information about the banary and how to use it, you can run `lqth -h` or see this [document](./docs/bin.md).
+//! > **Note** for more information about the banary and how to use it, you can run `lqth -h` or see this [document](./docs/bin.md).
 //!
 //! # Wayland?
 //! Nah, I don't/can't use it.
