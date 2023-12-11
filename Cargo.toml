@@ -1,8 +1,16 @@
 [package]
 name = "lqth"
 version = "0.1.0"
+description = "Simple but blazingly fast screenshot utility"
 edition = "2021"
+license = "MIT"
+authors = ["Anas Elgarhy <anas.elgarhy.dev@gmail.com>"]
+repository = "https://github.com/0x61nas/lqth"
+documentation = "https://docs.rs/lqth"
+rust-version = "1.65.0"
 autobins = false
+categories = ["command-line-utilities"]
+keywords = ["screenshot", "xscreenshot", "capture"]
 
 [[bin]]
 name = "lqth"
