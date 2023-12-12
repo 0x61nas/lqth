@@ -16,7 +16,7 @@ checksum = "fd386f0746b2a12a14f1256fa1ee9a31c584aadcdd0b72b15a4cb59381e60b2d"
 
 [[package]]
 name = "lqth"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "byteorder",
  "thiserror",
