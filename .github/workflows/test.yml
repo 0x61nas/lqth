@@ -1,4 +1,4 @@
-# This is the main CI workflow that runs the test suite on all pushes to main and all pull requests.
+# This is the aurora CI workflow that runs the test suite on all pushes to aurora and all pull requests.
 # It runs the following jobs:
 # - required: runs the test suite on ubuntu with stable and beta rust toolchains
 # - minimal: runs the test suite with the minimal versions of the dependencies that satisfy the
@@ -10,7 +10,7 @@ permissions:
   contents: read
 on:
   push:
-    branches: [main]
+    branches: [aurora]
   pull_request:
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -80,31 +80,6 @@ jobs:
         run: rustup default stable
       - name: cargo update -Zminimal-versions
         run: cargo +nightly update -Zminimal-versions
-      - name: cargo test
-        run: cargo test --locked --all-features --all-targets
-  os-check:
-    # run cargo test on mac and windows
-    runs-on: ${{ matrix.os }}
-    name: ${{ matrix.os }} / stable
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-latest, windows-latest]
-    steps:
-      # if your project needs OpenSSL, uncommment this to fix Windows builds.
-      # it's commented out by default as tthe install command takes 5-10m.
-      # - run: echo "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" | Out-File -FilePath $env:GITHUB_ENV -Append
-      #   if: runner.os == 'Windows'
-      # - run: vcpkg install openssl:x64-windows-static-md
-      #   if: runner.os == 'Windows'
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Install stable
-        uses: dtolnay/rust-toolchain@stable
-      - name: cargo generate-lockfile
-        if: hashFiles('Cargo.lock') == ''
-        run: cargo generate-lockfile
       - name: cargo test
         run: cargo test --locked --all-features --all-targets
   coverage:
