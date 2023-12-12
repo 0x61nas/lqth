@@ -1,6 +1,6 @@
 **lqth** is a simple screenshot utility for X11. It writes thae image in a Farbfeld format to the stdout.
 
-# Build and instal
+# Build and install
 
 ```sh
 cargo build -r
@@ -28,7 +28,7 @@ Take a screenshot for the full screen
 lqth > screen.ff
 ```
 
-Take a scrrenshot for the active window
+Take a screenshot for the active window
 
 ```sh
 lqth -w $(xdotool getactivewindow) | ff2png > window.png
