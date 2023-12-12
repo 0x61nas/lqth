@@ -70,6 +70,12 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
 
+      - name: Install deps
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: x11proto-dev xorg
+          version: 1.0
+          
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
