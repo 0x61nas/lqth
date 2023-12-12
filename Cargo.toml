@@ -20,3 +20,7 @@ path = "src/bin/main.rs"
 byteorder = "1.5"
 thiserror = "1.0.2"
 x11 = { version = "2.21", default-features = false, features = ["xlib"] }
+
+[profile.release]
+opt-level = 3 # all optmizations
+lto = true # LLVM’s link time optimizations. LTO can produce better optimized code, using whole-program analysis, at the cost of longer linking time.
