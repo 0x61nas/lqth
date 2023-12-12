@@ -109,7 +109,7 @@ fn parse_args() -> TickTick {
             }
             "v" | "version" => info(format!("{NAME} {VERSION}")),
             "h" | "help" => info(format!("Usage: {NAME} [OPTIONS]\n{HELP}")),
-            unknow => fail(format!("Unknown argument `{unknow}`")),
+            unknown => fail(format!("Unknown argument `{unknown}`")),
         }
     }
     opts
