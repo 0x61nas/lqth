@@ -5,7 +5,7 @@
 #   requirements of this crate, and its dependencies
 # - os-check: runs the test suite on mac and windows
 # - coverage: runs the test suite and collects coverage information
-# See check.yml for information about how the concurrency cancelation and workflow triggering works
+# See check.yml for information about how the concurrency cancellation and workflow triggering works
 permissions:
   contents: read
 on:
