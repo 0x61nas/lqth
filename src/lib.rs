@@ -34,7 +34,8 @@
 //!
 //! We offer a simple binary that's implement the most of this crate features. You can build it with the build command or if u use cargo then you can install it via `cargo install lqth`.
 //!
-//! > **Note** for more information about the binary and how to use it, you can run `lqth -h` or see this [document](./docs/bin.md).
+//! > **Note**
+//! > for more information about the binary and how to use it, you can run `lqth -h` or see this [document](./docs/bin.md).
 //!
 //! # Wayland?
 //! Nah, I luv my X.
