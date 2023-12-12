@@ -2,6 +2,17 @@
 
 # https://www.conventionalcommits.org
 style="conventional"
+allowed_types = [
+    "fix",
+    "feat",
+    "chore",
+    "docs",
+    "style",
+    "refactor",
+    "perf",
+    "test",
+    "ci",
+]
 # allow merge commits
 merge_commit = true
 # subject is not required to be capitalized
