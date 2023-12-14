@@ -55,7 +55,6 @@
 
 use std::{io::Write, mem::MaybeUninit, ptr};
 
-use byteorder::{BigEndian, ByteOrder};
 use x11::xlib::{
     XCloseDisplay, XDestroyImage, XGetImage, XGetPixel, XGetWindowAttributes, XGrabServer,
     XOpenDisplay, XRootWindow, XUngrabServer, XWindowAttributes, ZPixmap, _XDisplay,
@@ -258,32 +257,27 @@ where
     // The magic value
     out_buf.write_all(MAGIC_BYTES)?;
 
-    let mut buf = [0u8; 4];
-    BigEndian::write_u32(&mut buf, img.width as u32);
-    out_buf.write_all(&buf)?; // 4 bytes
-    BigEndian::write_u32(&mut buf, img.height as u32);
-    out_buf.write_all(&buf)?; // 4 bytes
+    // 8 bytes for the width and the height
+    out_buf.write_all(&(img.width as u32).to_be_bytes())?;
+    out_buf.write_all(&(img.height as u32).to_be_bytes())?;
 
     macro_rules! write_channel {
-        ($out: ident; $buf: ident, $cn: expr) => {
+        ($out: ident; $cn: expr) => {
             {
-                BigEndian::write_u16(&mut $buf, $cn);
-                $out.write_all(&$buf)
+                $out.write_all(&$cn.to_be_bytes())
             }
         };
-        ($out: ident; $buf: ident; channels: $($cn: expr,)+) => {
-            $(write_channel!($out; $buf, $cn)?;)*
+        ($out: ident; $($cn: expr,)+) => {
+            $(write_channel!($out; $cn)?;)*
         };
     }
 
-    let mut buf = [0u8; 2];
     // write pixels
     for h in 0..img.height {
         for w in 0..img.width {
             // SAFETY: If we reatch to here, then we're sure that the `img_ptr` are valid. Also `w` and `h` will always be in the renge.
             let p = unsafe { XGetPixel(img_ptr, w, h) };
-            write_channel! { out_buf; buf;
-                channels:
+            write_channel! { out_buf;
                 ((p & img.red_mask) >> sr) as u16 * fr,
                 ((p & img.green_mask) >> sg) as u16 * fg,
                 (p & img.blue_mask) as u16 * fb,
