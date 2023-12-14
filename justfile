@@ -13,6 +13,7 @@ default: check lint test
 
 setup:
     cargo install cargo-readme
+    cargo install cargo-depgraph
     cargo install grcov
     cargo install committed
     cargo install cargo-deny
@@ -55,3 +56,4 @@ coverage-report: coverage
 @generate-readme:
     cargo readme --template _readme.tpl > README.md
     sed -i "s/\*\*Note\*\*/\[!Note\]/g" README.md
+    cargo depgraph --all-features --all-deps | dot -Tpng > _deps.png
