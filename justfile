@@ -53,7 +53,7 @@ coverage-report: coverage
     xdg-open {{_CARGO_TARGET_DIR}}/coverage/report/index.html
 
 # Generate the readme file
-@generate-readme:
+generate-readme:
     cargo readme --template _readme.tpl > README.md
     sed -i "s/\*\*Note\*\*/\[!Note\]/g" README.md
     cargo depgraph --all-features --all-deps | dot -Tpng > _deps.png
