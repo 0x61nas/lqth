@@ -53,5 +53,5 @@ coverage-report: coverage
 
 # Generate the readme file
 @generate-readme:
-    cargo readme > README.md
+    cargo readme --template _readme.tpl > README.md
     sed -i "s/\*\*Note\*\*/\[!Note\]/g" README.md
