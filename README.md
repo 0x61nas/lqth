@@ -1,4 +1,6 @@
-# lqth
+<p align="center">
+    <img alt="Lqth logo" src="./lqth.png" width="250">
+</p>
 
 **Lqth (لقطه) which means "shot" or/and "capture" in Arabic** is a simple but blazingly fast screenshot utility
 inspired by [xscreenshot](https://git.codemadness.org/xscreenshot) and follows the suckless philosophy...(AHM, ahmmmm)... most of it :).
