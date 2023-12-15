@@ -1,4 +1,6 @@
-# {{crate}}
+<p align="center">
+    <img alt="Lqth logo" src="./lqth.png" width="250">
+</p>
 
 {{readme}}
 
