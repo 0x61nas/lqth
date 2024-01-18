@@ -18,7 +18,7 @@ fn main() {
     let mut buf = io::stdout().lock();
     // tick(&mut out_buf, &()).unwrap();
     if let Err(e) = parse_args().tick(&mut buf) {
-        fail(format!("{e}"));
+        fail(format!("{e}").leak());
     }
 }
 
@@ -28,13 +28,10 @@ fn parse_args() -> TickTick {
 
     macro_rules! err {
         ($arg:ident) => {
-            fail(format!("Expected one argument after {}, found 0.", $arg));
+            fail(format!("Expected one argument after {}, found 0.", $arg).leak());
         };
         (parse; $item:expr, $error:ident) => {
-            fail(format!(
-                "Can't parse the provided {}, because `{}`",
-                $item, $error
-            ))
+            fail(format!("Can't parse the provided {}, because `{}`", $item, $error).leak())
         };
     }
 
@@ -66,9 +63,7 @@ fn parse_args() -> TickTick {
 
     while let Some(arg) = args.next() {
         if !arg.starts_with('-') {
-            fail(format!(
-                "Unspexted argument {arg}. All the options should start with `-`"
-            ));
+            fail(format!("Unspexted argument {arg}. All the options should start with `-`").leak());
         }
         match arg.trim_start_matches('-') {
             "d" | "addr" | "display" => {
@@ -107,20 +102,22 @@ fn parse_args() -> TickTick {
                     };
                 }
             }
-            "v" | "version" => info(format!("{NAME} {VERSION}")),
-            "h" | "help" => info(format!("Usage: {NAME} [OPTIONS]\n{HELP}")),
-            unknown => fail(format!("Unknown argument `{unknown}`")),
+            "v" | "version" => info(format!("{NAME} {VERSION}").leak()),
+            "h" | "help" => info(format!("Usage: {NAME} [OPTIONS]\n{HELP}").leak()),
+            unknown => fail(format!("Unknown argument `{unknown}`").leak()),
         }
     }
     opts
 }
 
-fn fail(msg: String) -> ! {
+#[cold]
+fn fail(msg: &'static str) -> ! {
     eprintln!("{msg}");
     std::process::exit(1)
 }
 
-fn info(msg: String) -> ! {
+#[cold]
+fn info(msg: &'static str) -> ! {
     println!("{msg}");
     std::process::exit(0)
 }
