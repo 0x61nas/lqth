@@ -37,7 +37,7 @@ lqth -w $(xdotool getactivewindow) | ff2png > window.png
 Take a screenshot for a spesfic region
 
 ```sh
-lqth -r "$(xrectsel "x: %x y: %y w: %w h: %h")" | ff2png > region.png
+lqth -r "$(xrectsel "x:%x,y:%y,w:%w,h:%h")" | ff2png > region.png
 ```
 
 > Yep is just simple as that :)

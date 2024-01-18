@@ -18,7 +18,7 @@ fn main() {
     let mut buf = io::stdout().lock();
     // tick(&mut out_buf, &()).unwrap();
     if let Err(e) = parse_args().tick(&mut buf) {
-        fail(format!("{e}"));
+        fail(format!("{e}").leak());
     }
 }
 
@@ -28,13 +28,10 @@ fn parse_args() -> TickTick {
 
     macro_rules! err {
         ($arg:ident) => {
-            fail(format!("Expected one argument after {}, found 0.", $arg));
+            fail(format!("Expected one argument after {}, found 0.", $arg).leak());
         };
         (parse; $item:expr, $error:ident) => {
-            fail(format!(
-                "Can't parse the provided {}, because `{}`",
-                $item, $error
-            ))
+            fail(format!("Can't parse the provided {}, because `{}`", $item, $error).leak())
         };
     }
 
@@ -66,9 +63,7 @@ fn parse_args() -> TickTick {
 
     while let Some(arg) = args.next() {
         if !arg.starts_with('-') {
-            fail(format!(
-                "Unspexted argument {arg}. All the options should start with `-`"
-            ));
+            fail(format!("Unspexted argument {arg}. All the options should start with `-`").leak());
         }
         match arg.trim_start_matches('-') {
             "d" | "addr" | "display" => {
@@ -90,15 +85,46 @@ fn parse_args() -> TickTick {
                 let mut h = 0;
 
                 let value = value!(args, arg);
-                let mut args = value.split_ascii_whitespace();
 
-                while let Some(a) = args.next() {
-                    match a {
-                        "x:" => x = value!(parse; args, "X coordent", a),
-                        "y:" => y = value!(parse; args, "Y coordent", a),
-                        "w:" => w = value!(parse; args, "Width", a),
-                        "h:" => h = value!(parse; args, "Height", a),
-                        unknown => fail(format!("Error at {unknown}")),
+                for a in value.split(',') {
+                    let Some((label, value)) = a.split_once(':') else {
+                        fail("You must provide the labels")
+                    };
+                    let value = value.trim();
+                    match label.trim() {
+                        "x" => {
+                            x = unsafe {
+                                value
+                                    .parse()
+                                    .map_err(|_e| err!(parse; "X coordinates", a))
+                                    .unwrap_unchecked()
+                            }
+                        }
+                        "y" => {
+                            y = unsafe {
+                                value
+                                    .parse()
+                                    .map_err(|_e| err!(parse; "Y coordinates", a))
+                                    .unwrap_unchecked()
+                            }
+                        }
+                        "w" => {
+                            w = unsafe {
+                                value
+                                    .parse()
+                                    .map_err(|_e| err!(parse; "Width", a))
+                                    .unwrap_unchecked()
+                            }
+                        }
+                        "h" => {
+                            h = unsafe {
+                                value
+                                    .parse()
+                                    .map_err(|_e| err!(parse; "Heghit", a))
+                                    .unwrap_unchecked()
+                            }
+                        }
+                        unknown => fail(format!("Error at {unknown}").leak()),
                     }
 
                     opts.mode = Mode::Selection {
@@ -107,20 +133,22 @@ fn parse_args() -> TickTick {
                     };
                 }
             }
-            "v" | "version" => info(format!("{NAME} {VERSION}")),
-            "h" | "help" => info(format!("Usage: {NAME} [OPTIONS]\n{HELP}")),
-            unknown => fail(format!("Unknown argument `{unknown}`")),
+            "v" | "version" => info(format!("{NAME} {VERSION}").leak()),
+            "h" | "help" => info(format!("Usage: {NAME} [OPTIONS]\n{HELP}").leak()),
+            unknown => fail(format!("Unknown argument `{unknown}`").leak()),
         }
     }
     opts
 }
 
-fn fail(msg: String) -> ! {
+#[cold]
+fn fail(msg: &'static str) -> ! {
     eprintln!("{msg}");
     std::process::exit(1)
 }
 
-fn info(msg: String) -> ! {
+#[cold]
+fn info(msg: &'static str) -> ! {
     println!("{msg}");
     std::process::exit(0)
 }
