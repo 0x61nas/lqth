@@ -17,7 +17,7 @@ name = "lqth"
 path = "src/bin/main.rs"
 
 [dependencies]
-thiserror = ">=1.0.2"
+thiserror = ">=1.0.56"
 x11 = { version = "2.21", default-features = false, features = ["xlib"] }
 
 [profile.release]
