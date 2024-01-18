@@ -85,15 +85,46 @@ fn parse_args() -> TickTick {
                 let mut h = 0;
 
                 let value = value!(args, arg);
-                let mut args = value.split_ascii_whitespace();
 
-                while let Some(a) = args.next() {
-                    match a {
-                        "x:" => x = value!(parse; args, "X coordent", a),
-                        "y:" => y = value!(parse; args, "Y coordent", a),
-                        "w:" => w = value!(parse; args, "Width", a),
-                        "h:" => h = value!(parse; args, "Height", a),
-                        unknown => fail(format!("Error at {unknown}")),
+                for a in value.split(',') {
+                    let Some((label, value)) = a.split_once(':') else {
+                        fail("You must provide the labels")
+                    };
+                    let value = value.trim();
+                    match label.trim() {
+                        "x" => {
+                            x = unsafe {
+                                value
+                                    .parse()
+                                    .map_err(|_e| err!(parse; "X coordinates", a))
+                                    .unwrap_unchecked()
+                            }
+                        }
+                        "y" => {
+                            y = unsafe {
+                                value
+                                    .parse()
+                                    .map_err(|_e| err!(parse; "Y coordinates", a))
+                                    .unwrap_unchecked()
+                            }
+                        }
+                        "w" => {
+                            w = unsafe {
+                                value
+                                    .parse()
+                                    .map_err(|_e| err!(parse; "Width", a))
+                                    .unwrap_unchecked()
+                            }
+                        }
+                        "h" => {
+                            h = unsafe {
+                                value
+                                    .parse()
+                                    .map_err(|_e| err!(parse; "Heghit", a))
+                                    .unwrap_unchecked()
+                            }
+                        }
+                        unknown => fail(format!("Error at {unknown}").leak()),
                     }
 
                     opts.mode = Mode::Selection {
