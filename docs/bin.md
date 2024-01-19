@@ -40,5 +40,11 @@ Take a screenshot for a spesfic region
 lqth -r "$(xrectsel "x:%x,y:%y,w:%w,h:%h")" | ff2png > region.png
 ```
 
+Take a screenshot of a specific region and copy it into the system clipboard
+
+```sh
+lqth -r $(xrectsel "x:%x,y:%y,w:%w,h:%h") | ff2png | xclip -sel clip -t image/png -i
+```
+
 > Yep is just simple as that :)
 
