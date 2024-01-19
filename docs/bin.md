@@ -28,13 +28,13 @@ Take a screenshot for the full screen
 lqth > screen.ff
 ```
 
-Take a screenshot for the active window
+Take a screenshot of the active window
 
 ```sh
 lqth -w $(xdotool getactivewindow) | ff2png > window.png
 ```
 
-Take a screenshot for a spesfic region
+Take a screenshot of a specific region
 
 ```sh
 lqth -r "$(xrectsel "x:%x,y:%y,w:%w,h:%h")" | ff2png > region.png
