@@ -1,6 +1,6 @@
 [package]
 name = "lqth"
-version = "0.2.1"
+version = "0.2.2"
 description = "Simple but blazingly fast screenshot utility"
 edition = "2021"
 license = "MIT"
@@ -21,5 +21,8 @@ thiserror = ">=1.0.57"
 x11 = { version = "2.21", default-features = false, features = ["xlib"] }
 
 [profile.release]
-opt-level = 3 # all optimizations
-lto = true # LLVM’s link time optimizations. LTO can produce better optimized code, using whole-program analysis, at the cost of longer linking time.
+panic = "abort"
+lto = true
+strip = "symbols"
+codegen-units = 1
+
