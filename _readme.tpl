@@ -6,8 +6,6 @@
 
 # Usage as a flake
 
-[![FlakeHub](https://img.shields.io/endpoint?url=https://flakehub.com/f/0x61nas/lqth/badge)](https://flakehub.com/flake/0x61nas/lqth)
-
 Add lqth to your `flake.nix`:
 
 ```nix
