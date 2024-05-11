@@ -5,6 +5,7 @@
 //! [![docs.rs](https://docs.rs/lqth/badge.svg)](https://docs.rs/lqth)
 //! [![downloads](https://img.shields.io/crates/d/lqth.svg)](https://crates.io/crates/lqth)
 //! [![license](https://img.shields.io/crates/l/lqth.svg)](https://github.com/0x61nas/lqth/blob/aurora/LICENSE)
+//! [![FlakeHub](https://img.shields.io/endpoint?url=https://flakehub.com/f/0x61nas/lqth/badge)](https://flakehub.com/flake/0x61nas/lqth)
 //!
 //! # Examples
 //! The boring way:
