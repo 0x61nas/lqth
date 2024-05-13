@@ -9,6 +9,7 @@ inspired by [xscreenshot](https://git.codemadness.org/xscreenshot) and follows t
 [![docs.rs](https://docs.rs/lqth/badge.svg)](https://docs.rs/lqth)
 [![downloads](https://img.shields.io/crates/d/lqth.svg)](https://crates.io/crates/lqth)
 [![license](https://img.shields.io/crates/l/lqth.svg)](https://github.com/0x61nas/lqth/blob/aurora/LICENSE)
+[![FlakeHub](https://img.shields.io/endpoint?url=https://flakehub.com/f/0x61nas/lqth/badge)](https://flakehub.com/flake/0x61nas/lqth)
 
 ## Examples
 The boring way:
@@ -55,6 +56,22 @@ This project is licensed under [MIT license][mit].
 
 [mit]: https://github.com/0x61nas/lqth/blob/aurora/LICENSE
 
+
+
+# Usage as a flake
+
+Add lqth to your `flake.nix`:
+
+```nix
+{
+  inputs.lqth.url = "https://flakehub.com/f/0x61nas/lqth/*.tar.gz";
+
+  outputs = { self, lqth }: {
+    # Use in your outputs
+  };
+}
+
+```
 
 
 ## Dependencies graph
