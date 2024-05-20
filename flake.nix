@@ -32,11 +32,7 @@
           pkg-config
         ];
 
-        buildInputs = with pkgs; [
-          pkg-config
-
-          xorg.libX11
-        ];
+        buildInputs = with pkgs; [ xorg.libX11 ];
 
         cargoArtifacts = craneLib.buildDepsOnly ({
           src = craneLib.cleanCargoSource (craneLib.path ./.);
@@ -64,7 +60,7 @@
 
           packages = with pkgs; [
             (rust-bin.stable.latest.default.override {
-              extensions = [ "rust-src" "rust-analyzer" ];
+              extensions = [ "rust-analyzer" ];
             })
             cargo-bloat
             cargo-outdated
@@ -76,7 +72,7 @@
         };
       }) // {
         overlay = final: prev: {
-          inherit (self.packages.${final.system}) ytdlp-gui;
+          inherit (self.packages.${final.system}) lqth;
         };
       };
 }
