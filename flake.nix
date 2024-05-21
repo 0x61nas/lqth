@@ -52,28 +52,33 @@
             GIT_HASH = self.rev or self.dirtyRev;
           };
 
-          default = lqth;
-        };
+          devShell = mkShell {
+            inherit buildInputs nativeBuildInputs;
 
-        devShell = mkShell {
-          inherit buildInputs nativeBuildInputs;
-
-          packages = with pkgs; [
-            (rust-bin.stable.latest.default.override {
-              extensions = [ "rust-analyzer" ];
-            })
-            cargo-bloat
-            cargo-outdated
-            cargo-udeps
-            rust-analyzer
-            cargo-deny
-          ];
-          LD_LIBRARY_PATH = "${libPath}";
-        };
-      }) // {
-        overlay = final: prev: {
-          inherit (self.packages.${final.system}) lqth;
-        };
+            packages = with pkgs; [
+              (rust-bin.stable.latest.default.override {
+                extensions = [ "rust-analyzer" ];
+              })
+              cargo-bloat
+              cargo-outdated
+              cargo-udeps
+              rust-analyzer
+              cargo-deny
+              just
+              typos
+              codespell
+              # committed
+              grcov
+              cargo-readme
+              cargo-depgraph
+              graphviz
+            ];
+            LD_LIBRARY_PATH = "${libPath}";
+          };
+        }
+      ) // {
+      overlay = final: prev: {
+        inherit (self.packages.${final.system}) lqth;
       };
 }
 
