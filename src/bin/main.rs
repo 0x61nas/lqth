@@ -96,7 +96,7 @@ fn parse_args() -> TickTick {
                             x = unsafe {
                                 value
                                     .parse()
-                                    .map_err(|_e| err!(parse; "X coordinates", a))
+                                    .map_err::<(), _>(|_e| err!(parse; "X coordinates", a))
                                     .unwrap_unchecked()
                             }
                         }
@@ -104,7 +104,7 @@ fn parse_args() -> TickTick {
                             y = unsafe {
                                 value
                                     .parse()
-                                    .map_err(|_e| err!(parse; "Y coordinates", a))
+                                    .map_err::<(), _>(|_e| err!(parse; "Y coordinates", a))
                                     .unwrap_unchecked()
                             }
                         }
@@ -112,7 +112,7 @@ fn parse_args() -> TickTick {
                             w = unsafe {
                                 value
                                     .parse()
-                                    .map_err(|_e| err!(parse; "Width", a))
+                                    .map_err::<(), _>(|_e| err!(parse; "Width", a))
                                     .unwrap_unchecked()
                             }
                         }
@@ -120,7 +120,7 @@ fn parse_args() -> TickTick {
                             h = unsafe {
                                 value
                                     .parse()
-                                    .map_err(|_e| err!(parse; "Heghit", a))
+                                    .map_err::<(), _>(|_e| err!(parse; "Heghit", a))
                                     .unwrap_unchecked()
                             }
                         }
