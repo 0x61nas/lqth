@@ -8,6 +8,7 @@ alias c := check
 alias cov := coverage-report
 alias r := generate-readme
 alias s := setup
+alias pub := publish
 
 default: check lint test
 
@@ -57,3 +58,24 @@ generate-readme:
     cargo readme --template _readme.tpl > README.md
     sed -i "s/\*\*Note\*\*/\[!Note\]/g" README.md
     cargo depgraph --all-features --all-deps | dot -Tpng > _deps.png
+
+# Push the code to all remotes
+push FLAGS="-u" BRANSH="aurora":
+    git push {{FLAGS}} github {{BRANSH}}
+    git push {{FLAGS}} gitlab {{BRANSH}}
+    git push {{FLAGS}} codeberg {{BRANSH}}
+    git push {{FLAGS}} disroot {{BRANSH}}
+
+# Push the git tags to all remotes
+pusht: push
+    git push --tags github
+    git push --tags gitlab
+    git push --tags codeberg
+    git push --tags disroot
+    
+# Publish the crate to crates.io
+publish:
+    cargo publish
+
+clean:
+    git clean -fdx
