@@ -80,4 +80,4 @@ Add lqth to your `flake.nix`:
 
 > Generated with [cargo-depgraph](https://crates.io/crates/cargo-depgraph)
 
-Current version: 0.2.2
+Current version: 0.2.4
