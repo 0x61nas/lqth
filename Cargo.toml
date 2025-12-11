@@ -1,6 +1,6 @@
 [package]
 name = "lqth"
-version = "0.2.3-alpha.1"
+version = "0.2.4"
 description = "Simple but blazingly fast screenshot utility"
 edition = "2021"
 license = "MIT"
