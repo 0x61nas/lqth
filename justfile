@@ -65,6 +65,8 @@ push FLAGS="-u" BRANSH="aurora":
     git push {{FLAGS}} gitlab {{BRANSH}}
     git push {{FLAGS}} codeberg {{BRANSH}}
     git push {{FLAGS}} disroot {{BRANSH}}
+    git push {{FLAGS}} tangled {{BRANSH}}
+    git push {{FLAGS}} codefloe {{BRANSH}}
 
 # Push the git tags to all remotes
 pusht: push
@@ -72,6 +74,8 @@ pusht: push
     git push --tags gitlab
     git push --tags codeberg
     git push --tags disroot
+    git push --tags tangled
+    git push --tags codefloe
     
 # Publish the crate to crates.io
 publish:
