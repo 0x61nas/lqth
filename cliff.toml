@@ -36,7 +36,7 @@ body = """
 {% endif %}
 
 {%- macro remote_url() -%}
-  https://github.com/0x61nas/aarty
+  https://github.com/0x61nas/lqth
 {%- endmacro -%}
 """
 # template for the changelog footer
@@ -87,7 +87,7 @@ protect_breaking_commits = false
 # filter out the commits that are not matched by commit parsers
 filter_commits = false
 # regex for matching git tags
-tag_pattern = "[0-9].*"
+tag_pattern = ".*"
 # regex for skipping tags
 # skip_tags = ""
 # regex for ignoring tags
