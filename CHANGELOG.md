@@ -7,12 +7,17 @@ All notable changes to this project will be documented in this file.
 > this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [unreleased]
 
+### 📚 Documentation
+
+- *(changlog)* Init
+
 ### ⚙️ Miscellaneous Tasks
 
 - *(justfile)* Add tangled and codefloe remotes
 - *(github)* Add more links for funding
 - *(git-cliff)* Setup
 - *(git-cliff)* Filter unconvetional commits
+- *(git-cliff)* Fix the remote url and include all tags
 
 
 
@@ -55,7 +60,7 @@ All notable changes to this project will be documented in this file.
 
 
 
-> **Full Changelog**: https://github.com/0x61nas/aarty/compare/0.2.2...0.2.4
+> **Full Changelog**: https://github.com/0x61nas/lqth/compare/0.2.2...0.2.4
 
 ## [0.2.2] - 2024-03-01
 
@@ -74,7 +79,7 @@ All notable changes to this project will be documented in this file.
 
 
 
-> **Full Changelog**: https://github.com/0x61nas/aarty/compare/0.2.1...0.2.2
+> **Full Changelog**: https://github.com/0x61nas/lqth/compare/0.2.1...0.2.2
 
 ## [0.2.1] - 2024-01-18
 
@@ -105,7 +110,7 @@ All notable changes to this project will be documented in this file.
 
 
 
-> **Full Changelog**: https://github.com/0x61nas/aarty/compare/0.1.3...0.2.1
+> **Full Changelog**: https://github.com/0x61nas/lqth/compare/0.1.3...0.2.1
 
 ## [0.1.3] - 2023-12-14
 
@@ -132,7 +137,7 @@ All notable changes to this project will be documented in this file.
 
 
 
-> **Full Changelog**: https://github.com/0x61nas/aarty/compare/0.1.2...0.1.3
+> **Full Changelog**: https://github.com/0x61nas/lqth/compare/0.1.2...0.1.3
 
 ## [0.1.2] - 2023-12-12
 
@@ -154,7 +159,7 @@ All notable changes to this project will be documented in this file.
 
 
 
-> **Full Changelog**: https://github.com/0x61nas/aarty/compare/0.1.0...0.1.2
+> **Full Changelog**: https://github.com/0x61nas/lqth/compare/0.1.0...0.1.2
 
 ## [0.1.0] - 2023-12-11
 
