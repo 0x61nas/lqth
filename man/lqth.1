@@ -1,0 +1,96 @@
+.TH LQTH 1 "February 2026" "lqth 0.2.4" "User Commands"
+.SH NAME
+lqth \- simple screenshot utility for X11
+
+.SH SYNOPSIS
+.B lqth
+.RI [ options ]
+
+.SH DESCRIPTION
+.B lqth
+is a simple screenshot utility for X11.
+It captures screenshots and writes the image data in
+.B farbfeld
+format to standard output.
+
+The output can be redirected to a file or piped into other tools
+for conversion or further processing.
+
+.SH OPTIONS
+.TP
+.BR -d ", " --display " <X server address>"
+Specify the X11 display to capture from.
+
+.TP
+.BR -w ", " --window " <window id>"
+Capture a specific window by its X11 window ID.
+
+.TP
+.BR -s ", " --screen " <screen number>"
+Capture a specific screen.
+This option is only effective if no window is selected.
+
+.TP
+.BR -r ", " --region " <coordinates>"
+Capture a rectangular region.
+Coordinates must be specified in the following format:
+.br
+.BR x :<n>, y :<n>, w :<n>, h :<n>
+
+.TP
+.BR -v ", " --version
+Show version information and exit.
+
+.TP
+.BR -h ", " --help
+Show help and exit.
+
+.SH DEPENDENCIES
+.TP
+.B libX11
+
+.SH OPTIONAL DEPENDENCIES
+To convert farbfeld output into common image formats, you can use:
+.TP
+.B ff2png
+.TP
+.B ff2jpg
+.br
+Available from:
+.br
+https://git.suckless.org/farbfeld/
+
+.SH EXAMPLES
+Take a screenshot of the full screen:
+.RS
+.B lqth > screen.ff
+.RE
+
+Capture the active window and convert to PNG:
+.RS
+.B lqth -w $(xdotool getactivewindow) | ff2png > window.png
+.RE
+
+Capture a specific region:
+.RS
+.B lqth -r $(xrectsel 'x:%x,y:%y,w:%w,h:%h') | ff2png > region.png
+.RE
+
+Capture a region and copy it to the clipboard:
+.RS
+.B lqth -r $(xrectsel 'x:%x,y:%y,w:%w,h:%h') | ff2png | xclip -sel clip -t image/png -i
+.RE
+
+.SH EXIT STATUS
+.TP
+.B 0
+Success.
+.TP
+.B 1
+Error.
+
+.SH AUTHOR
+Written by Anas Elgarhy.
+
+.SH LICENSE
+MIT License.
