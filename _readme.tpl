@@ -26,4 +26,3 @@ Add lqth to your `flake.nix`:
 
 > Generated with [cargo-depgraph](https://crates.io/crates/cargo-depgraph)
 
-Current version: {{version}}
