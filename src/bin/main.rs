@@ -2,7 +2,11 @@ use std::io;
 
 use lqth::{DpyAddr, LqthConfig, Mode, TickTick, Window};
 
-const VERSION: &str = env!("CARGO_PKG_VERSION");
+// const VERSION: &str = option_env!("LQTH_BUILD_OVERWRITE_VERSION").unwrap_or(env!("CARGO_PKG_VERSION")); // require unstable for now
+const VERSION: &str = match option_env!("LQTH_BUILD_OVERWRITE_VERSION") {
+    Some(v) => v,
+    None => env!("CARGO_PKG_VERSION"),
+};
 const NAME: &str = env!("CARGO_PKG_NAME");
 const HELP: &str = r#"
     Options:
